@@ -110,13 +110,13 @@ C:\Users\sorom\dev\kotlinEx
 ├─ 📁 src
 │   ├─ 📁 main
 │   │   └─ 📁 kotlin
-│   │       ├─ App.kt
+│   │       ├─ Main.kt
 │   │       └─ sample/
 │   │           └─ Hello.kt
 │   │
 │   └─ 📁 test
 │       └─ 📁 kotlin
-│           └─ AppTest.kt
+│           └─ MainTest.kt
 │
 ├─ 📁 bin
 │   └─ (컴파일된 .class 파일 저장)
@@ -126,6 +126,7 @@ C:\Users\sorom\dev\kotlinEx
 │
 ├─ 📄 build.bat      ← 직접 실행용 빌드 스크립트
 ├─ 📄 run.bat        ← 실행용 스크립트
+├─ 📄 run.sh         ← build and run shell script
 └─ 📄 README.md
 
 # 폴더구조 만들기 (manually)
@@ -134,6 +135,7 @@ cd C:\Users\sorom\dev\kotlinEx
 mkdir src
 mkdir src\main
 mkdir src\main\kotlin
+mkdir src\main\kotlin\sample
 mkdir src\test
 mkdir src\test\kotlin
 mkdir bin
