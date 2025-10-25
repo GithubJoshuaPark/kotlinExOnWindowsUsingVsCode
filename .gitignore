@@ -1,0 +1,19 @@
+# Compiled output
+/bin
+/build
+/out
+
+# IDE files
+.idea/
+*.iml
+
+# Local properties
+local.properties
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.ear
