@@ -1,6 +1,5 @@
 package main.kotlin.samples
 
-import java.util.Scanner
 import main.kotlin.utils.StringUtils
 
 class VariableEx {
@@ -8,7 +7,7 @@ class VariableEx {
     val utils = StringUtils()
 
     fun run() {
-        utils.printLine("[예제 1] 변수 (val / var)")
+        utils.printLine("변수 (val / var)")
         val name = "Joshua"   // val is like constant
         var city = "Incheon"  // var is mutable
         city = "Seoul"

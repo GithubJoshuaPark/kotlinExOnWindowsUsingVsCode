@@ -26,14 +26,15 @@ class StringUtils {
     fun printLine(str: String) {
         if (str.isEmpty()) return
 
+        println()
         val displayWidth = str.sumOf { char: Char -> 
             when (char.code) {
                 in HANGUL_JAMO_START..HANGUL_JAMO_END,
                 in HANGUL_COMPATIBILITY_START..HANGUL_COMPATIBILITY_END,
-                in HANGUL_SYLLABLES_START..HANGUL_SYLLABLES_END -> 2
-                else -> 1
+                in HANGUL_SYLLABLES_START..HANGUL_SYLLABLES_END -> 2L
+                else -> 1L
             }
-        }
+        }.toInt()
     
         val border = "-".repeat(displayWidth)
         println(border)

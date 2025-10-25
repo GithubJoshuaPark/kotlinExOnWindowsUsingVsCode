@@ -13,7 +13,7 @@ class ClassEx {
     val utils = StringUtils()
 
     fun run() {
-        utils.printLine("[예제 5] 클래스 예제")
+        utils.printLine("클래스 예제")
 
         val scanner = Scanner(System.`in`)
         println("Enter your name: ")

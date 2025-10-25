@@ -2,13 +2,8 @@ package main.kotlin
 
 import java.util.Scanner
 
-import main.kotlin.samples.VariableEx 
-import main.kotlin.samples.ConditionEx
-import main.kotlin.samples.LoopsEx
-import main.kotlin.samples.FunctionsEx
-import main.kotlin.samples.ClassEx
-
 import main.kotlin.utils.StringUtils
+import main.kotlin.samples.*
 
 
 fun main() {
@@ -20,6 +15,13 @@ fun main() {
     val loopsEx = LoopsEx()
     val functionsEx = FunctionsEx()
     val classEx = ClassEx()
+
+    val collectionEx = CollectionEx()
+    val nullEx = NullEx()
+    val lambdaEx = LambdaEx()
+    val fileEx = FileEx()
+    val coroutineEx = CoroutineEx()
+    val JsonFileEx = JsonFileEx()
     
     
     while (true) {
@@ -29,6 +31,12 @@ fun main() {
         println("3. 반복문 (for / while) 예제")
         println("4. 함수 예제")
         println("5. 클래스 예제")
+        println("6. 컬렉션 (List / Set / Map) 예제")
+        println("7. Null 예제")
+        println("8. 고차함수(filter/map/sorted) 예제")
+        println("9. 파일 입출력 예제")
+        println("10. Coroutine 예제")
+        println("11. Json 파일 입출력 예제")
         println("0. 종료")
         print("번호를 입력하세요: ")
 
@@ -38,6 +46,12 @@ fun main() {
             "3" -> loopsEx.run()
             "4" -> functionsEx.run()
             "5" -> classEx.run()
+            "6" -> collectionEx.run()
+            "7" -> nullEx.run()
+            "8" -> lambdaEx.run()
+            "9" -> fileEx.run()
+            "10" -> coroutineEx.run()
+            "11" -> JsonFileEx.run()
             "0" -> {
                 println("프로그램을 종료합니다.")
                 break
