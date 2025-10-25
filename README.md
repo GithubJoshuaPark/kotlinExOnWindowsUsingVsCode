@@ -533,3 +533,211 @@ kotlinx-coroutines-core-jvm-1.9.0.jar
 C:\Kotlin\libs\kotlinx-coroutines-core-jvm-1.9.0.jar
 
 ```
+
+-- 
+
+✅ vsCode 에서 (libs 폴더에)라이브러리 (jar파일들)추가 후,
+> build.bat, run.bat 수정을 해도, <br>
+> kotlinc 직접 사용 환경에서 serialization 플러그인까지 수동으로 연결하기 <br>
+> Kotlin 직렬화는 단순 jar 라이브러리가 아니라 “컴파일러 플러그인”이 필요해서, <br>
+> Gradle 또는 IntelliJ 프로젝트처럼 플러그인이 자동으로 붙는 빌드 시스템을 써야 합니다. <br>
+
+---
+
+✅ 가장 확실한 해결 방법 (Gradle 프로젝트 전환)
+> 프로젝트 루트(C:\Users\sorom\dev\kotlinEx)에 아래 세 파일만 추가
+
+> 1. build.gradle.kts    <br>
+> 2. settings.gradle.kts <br>
+> 3. Gradle 설치 및 실행 <br>
+
+```bash
+// build.gradle.kts
+
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+plugins {
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.serialization") version "2.0.21"
+    application
+}
+
+repositories { mavenCentral() }
+
+
+dependencies {
+    // ✅ 코루틴 및 직렬화 라이브러리
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+}
+
+application {
+    // ✅ Kotlin main 함수 위치
+    mainClass.set("main.kotlin.MainKt")
+}
+
+// ----------------------------------------------------------
+// ✅ 빌드 정보 자동 삽입: version, author, build time
+// ----------------------------------------------------------
+val buildTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+val appVersion = "1.0.0"
+val appAuthor = "Joshua Park"
+
+// ✅ JAR 생성 시 메인 클래스 속성 추가
+tasks.jar {
+    manifest {
+        //attributes["Main-Class"] = "main.kotlin.MainKt"
+        attributes(
+            "Main-Class" to "main.kotlin.MainKt",
+            "Implementation-Title" to "KotlinEx",
+            "Implementation-Version" to appVersion,
+            "Built-By" to appAuthor,
+            "Build-Time" to buildTime
+        )
+    }
+
+    // ✅ 모든 런타임 종속 라이브러리를 포함 (Fat Jar)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    archiveFileName.set("kotlinEx-standalone.jar")
+}
+
+```
+
+```kotlin
+// settings.gradle.kts
+rootProject.name = "kotlinEx"
+```
+
+---
+<br>
+
+⚙️ Gradle 설치 및 실행 <br>
+✅ 1️⃣ Gradle 수동 설치 (공식 권장 방법)<br>
+> 📍 단계 요약 <br>
+> Gradle ZIP 다운로드 <br>
+> 압축 해제           <br>
+> 환경 변수 설정      <br>
+> 설치 확인           <br>
+
+```
+📦 (1) ZIP 파일 다운로드
+
+공식 사이트에서 최신 안정 버전 받기:
+🔗 https://gradle.org/releases
+
+예:
+👉 gradle-8.10.2-bin.zip 다운로드
+(현재 최신 버전 중 하나입니다)
+
+📁 (2) 압축 해제
+다운로드한 ZIP을 예를 들어 다음 경로에 풀어줍니다:
+
+C:\Gradle\gradle-9.1.0\
+ ├─ bin\
+ ├─ lib\
+ └─ LICENSE
+```
+
+![gradle_bin](./doc/gradle_bin.png)
+![path](./doc/path.png)
+
+```bash
+$ gradle -v
+
+------------------------------------------------------------
+Gradle 9.1.0
+------------------------------------------------------------
+
+Build time:    2025-09-18 13:05:56 UTC
+Revision:      e45a8dbf2470c2e2474ccc25be9f49331406a07e
+
+Kotlin:        2.2.0
+Groovy:        4.0.28
+Ant:           Apache Ant(TM) version 1.10.15 compiled on August 25 2024
+Launcher JVM:  17.0.17 (Oracle Corporation 17.0.17+8-LTS-360)
+Daemon JVM:    C:\Program Files\Java\jdk-17 (no JDK specified, using current Java home)
+OS:            Windows 11 10.0 amd64
+
+$ javac -version
+javac 17.0.17
+
+$ java -version
+java version "17.0.17" 2025-10-21 LTS
+Java(TM) SE Runtime Environment (build 17.0.17+8-LTS-360)
+Java HotSpot(TM) 64-Bit Server VM (build 17.0.17+8-LTS-360, mixed mode, sharing)
+
+$ kotlinc -version
+info: kotlinc-jvm 2.2.21 (JRE 17.0.17+8-LTS-360)
+
+$ where gradle
+C:\Gradle\gradle-9.1.0\bin\gradle
+C:\Gradle\gradle-9.1.0\bin\gradle.bat
+
+```
+
+```
+cd C:\Users\sorom\dev\kotlinEx
+gradle run
+```
+> - Gradle이 자동으로: <br>
+> - Kotlin 컴파일러 다운로드 <br>
+> - Serialization 플러그인 적용 <br>
+> - @Serializable, Json.encodeToString() 모두 활성화 <br>
+> - 코루틴, JSON 직렬화 자동 관리 <br>
+
+✅ 4️⃣ 추가 팁
+프로젝트 전체 빌드:
+```
+# 프로젝트 전체 빌드:
+gradle build
+
+# 캐시 삭제 후 재빌드:
+gradle clean build
+
+# JAR 실행 파일 생성:
+gradle jar
+
+```
+--- 
+<br>
+
+✅ 최종 추천 조합
+> - Windows 11 + JDK17 <br>
+> - Gradle 9.1         <br>
+> - Kotlin 2.2.0       <br> 
+
+--- 
+> Scanner(System.in)을 사용하는 <br>
+> 콘솔 입력 프로그램을 Gradle run으로 실행했을 때 <br>
+> 표준 입력이 연결되지 않는 환경 문제 
+
+```
+    (이런 경우), gradle run 으로 실행 하지 말고,
+    Gradle 대신 직접 실행 (가장 간단하고 추천)
+    빌드 후 생성된 .jar를 직접 실행하면
+    입력/출력 모두 정상 작동합니다.
+
+    gradle clean build
+    java -jar ./build/libs/kotlinEx-standalone.jar
+
+    ----------------------------
+    Kotlin Basic Practice Menu
+    ----------------------------
+    1. 변수 (val / var) 예제
+    2. 조건문 (if / when) 예제
+    3. 반복문 (for / while) 예제
+    4. 함수 예제
+    5. 클래스 예제
+    6. 컬렉션 (List / Set / Map) 예제
+    7. Null 예제
+    8. 고차함수(filter/map/sorted) 예제
+    9. 파일 입출력 예제
+    10. Coroutine 예제
+    11. Json 파일 입출력 예제
+    0. 종료
+    번호를 입력하세요:
+
+```
