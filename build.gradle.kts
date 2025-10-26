@@ -23,26 +23,30 @@ application {
 // ----------------------------------------------------------
 // ✅ 빌드 정보 자동 삽입: version, author, build time
 // ----------------------------------------------------------
-val buildTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+val appName = "kotlinEx"
 val appVersion = "1.0.0"
 val appAuthor = "Joshua Park"
+val buildDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+val buildTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
 // ✅ JAR 생성 시 메인 클래스 속성 추가
 tasks.jar {
+    val jarFileName = "${appName}-v${appVersion}-${buildDate}-standalone.jar"
+
     manifest {
         //attributes["Main-Class"] = "main.kotlin.MainKt"
         attributes(
             "Main-Class" to "main.kotlin.MainKt",
-            "Implementation-Title" to "KotlinEx",
+            "Implementation-Title" to appName,
             "Implementation-Version" to appVersion,
             "Built-By" to appAuthor,
             "Build-Time" to buildTime
         )
     }
 
+    archiveFileName.set(jarFileName)
     // ✅ 모든 런타임 종속 라이브러리를 포함 (Fat Jar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 
-    archiveFileName.set("kotlinEx-standalone.jar")
 }

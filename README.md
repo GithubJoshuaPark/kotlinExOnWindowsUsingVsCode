@@ -750,3 +750,11 @@ gradle jar
     번호를 입력하세요:
 
 ```
+
+✅ 터미널에서 실행하기
+
+```bash
+$ gradle clean build
+$ ls -t ./build/libs/*.jar | head -n 1                 # 생성된 jar파일 확인하기
+$ java -jar "$(ls -t ./build/libs/*.jar | head -n 1)"  # java -jar 실생하기
+```

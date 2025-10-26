@@ -23,15 +23,14 @@ fun main() {
     val coroutineEx = CoroutineEx()
     val JsonFileEx = JsonFileEx()
 
-    val version = object {}.javaClass.getResourceAsStream("/META-INF/MANIFEST.MF")?.bufferedReader()?.use {
-        val manifest = it.readText()
-        val ver = Regex("Implementation-Version: (.*)").find(manifest)?.groupValues?.get(1)
-        val author = Regex("Built-By: (.*)").find(manifest)?.groupValues?.get(1)
-        val time = Regex("Build-Time: (.*)").find(manifest)?.groupValues?.get(1)
-        utils.printLine("KotlinEx v$ver — Built by: $author at $time")
-    }
-    
-    
+    val manifest = object {}.javaClass.getResourceAsStream("/META-INF/MANIFEST.MF")?.bufferedReader()?.use { it.readText() }
+    val version = Regex("Implementation-Version: (.*)").find(manifest ?: "")?.groupValues?.get(1) ?: "Unknown"
+    val author = Regex("Built-By: (.*)").find(manifest ?: "")?.groupValues?.get(1) ?: "Unknown"
+    val time = Regex("Build-Time: (.*)").find(manifest ?: "")?.groupValues?.get(1) ?: "Unknown"
+
+    utils.printLine(" Kotlin Basic Practice ")
+    utils.printLine("KotlinEx v$version — Built by $author - Built at $time")
+
     while (true) {
         utils.printLine(" Kotlin Basic Practice Menu ")
         println("1. 변수 (val / var) 예제")
