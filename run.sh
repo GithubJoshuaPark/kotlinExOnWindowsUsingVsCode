@@ -1,21 +1,54 @@
 #!/bin/bash
 # ===============================================
-# KotlinEx build & run script
+# KotlinEx Auto Build & Run Script (v2.0)
 # Author : Joshua Park
-# Date   : $(date +%Y-%m-%d)
+# Updated: $(date +%Y-%m-%d)
 # ===============================================
 
-# 1️⃣ Gradle 빌드 (clean + build)
-echo "🧱 Building project with Gradle..."
-gradle clean build --quiet
+# 기본값
+CLEAN_BUILD=true
+DEBUG_MODE=false
+WATCH_MODE=false
 
-# 빌드 성공 여부 확인
-if [ $? -ne 0 ]; then
+# 인자 처리
+for arg in "$@"; do
+  case $arg in
+    --fast)
+      CLEAN_BUILD=false
+      ;;
+    --debug)
+      DEBUG_MODE=true
+      ;;
+    --watch)
+      WATCH_MODE=true
+      ;;
+    *)
+      ;;
+  esac
+done
+
+# 1️⃣ 빌드 단계
+echo "🧱 Building project with Gradle..."
+
+if [ "$CLEAN_BUILD" = true ]; then
+  CMD="gradle clean build"
+else
+  CMD="gradle build"
+fi
+
+if [ "$DEBUG_MODE" = false ]; then
+  CMD="$CMD --quiet"
+fi
+
+eval $CMD
+BUILD_RESULT=$?
+
+if [ $BUILD_RESULT -ne 0 ]; then
   echo "❌ Build failed. Check Gradle logs."
   exit 1
 fi
 
-# 2️⃣ 최신 JAR 파일 찾기
+# 2️⃣ 최신 JAR 탐색
 LATEST_JAR=$(ls -t ./build/libs/*.jar | head -n 1)
 
 if [ -z "$LATEST_JAR" ]; then
@@ -23,7 +56,22 @@ if [ -z "$LATEST_JAR" ]; then
   exit 1
 fi
 
-# 3️⃣ 실행
-echo "🚀 Running latest JAR: $LATEST_JAR"
-echo "------------------------------------------"
-java -jar "$LATEST_JAR"
+# 3️⃣ 실행 함수
+run_jar() {
+  echo "🚀 Running latest JAR: $LATEST_JAR"
+  echo "------------------------------------------"
+  java -jar "$LATEST_JAR"
+}
+
+# 4️⃣ watch 모드 (변경 시 자동 빌드)
+if [ "$WATCH_MODE" = true ]; then
+  echo "👀 Watch mode enabled — source changes trigger rebuilds"
+  echo "Press [Ctrl+C] to stop watching."
+  while true; do
+    inotifywait -r -e modify,create,delete ./src >/dev/null 2>&1
+    clear
+    bash "$0" --fast
+  done
+else
+  run_jar
+fi
