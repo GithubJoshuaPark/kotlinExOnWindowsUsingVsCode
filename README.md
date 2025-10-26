@@ -723,6 +723,15 @@ gradle jar
     gradle clean build
     java -jar ./build/libs/kotlinEx-standalone.jar
 
+    ✅ 5️⃣ 완성된 결과
+    - JAR 파일 이름: kotlinEx-standalone.jar
+    - 포함 내용:
+    - Kotlin runtime
+    - Coroutines, Serialization
+    - Main class entry
+    - Metadata (version, author, build time)
+    - 외부 의존성 없음 — java -jar로 어디서나 실행 가능
+
     ----------------------------
     Kotlin Basic Practice Menu
     ----------------------------

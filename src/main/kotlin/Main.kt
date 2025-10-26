@@ -22,6 +22,14 @@ fun main() {
     val fileEx = FileEx()
     val coroutineEx = CoroutineEx()
     val JsonFileEx = JsonFileEx()
+
+    val version = object {}.javaClass.getResourceAsStream("/META-INF/MANIFEST.MF")?.bufferedReader()?.use {
+        val manifest = it.readText()
+        val ver = Regex("Implementation-Version: (.*)").find(manifest)?.groupValues?.get(1)
+        val author = Regex("Built-By: (.*)").find(manifest)?.groupValues?.get(1)
+        val time = Regex("Build-Time: (.*)").find(manifest)?.groupValues?.get(1)
+        utils.printLine("KotlinEx v$ver — Built by: $author at $time")
+    }
     
     
     while (true) {
