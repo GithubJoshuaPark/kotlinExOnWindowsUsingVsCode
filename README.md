@@ -768,4 +768,9 @@ $ java -jar "$(ls -t ./build/libs/*.jar | head -n 1)"  # java -jar 실생하기
 | 디버그 출력 | `./run.sh --debug` | 빌드 로그를 자세히 출력          |
 | 개발 루프   | `./run.sh --watch` | 파일 변경 시 자동 rebuild & 실행 |
 
+$ ./run.sh
+$ ./run.sh --fast
+$ ./run.sh --debug
+$ ./run.sh --watch
+
 ```
