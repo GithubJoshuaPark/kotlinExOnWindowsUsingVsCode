@@ -27,9 +27,11 @@ val appName = "kotlinEx"
 val appVersion = "1.0.0"
 val appAuthor = "Joshua Park"
 val buildDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-val buildTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+val buildTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-// ✅ JAR 생성 시 메인 클래스 속성 추가
+// ----------------------------------------------------------
+// ✅ fat jar (독립 실행형) 생성 설정
+// ----------------------------------------------------------
 tasks.jar {
     val jarFileName = "${appName}-v${appVersion}-${buildDate}-standalone.jar"
 
@@ -49,4 +51,31 @@ tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 
+}
+
+// ----------------------------------------------------------
+// ✅ build 후 자동 실행 (latest jar 실행)
+// ----------------------------------------------------------
+tasks.register("runLatestJar") {
+    dependsOn("build")
+
+   // buildDir: “현재 프로젝트의 빌드 출력 폴더 경로” (ex: C:\Users\sorom\dev\kotlinEx\build)
+    doLast {
+        val libsDir = file("$buildDir/libs")
+        val latestJar = libsDir.listFiles()
+            ?.filter { it.extension == "jar" }
+            ?.maxByOrNull { it.lastModified() }
+
+        if (latestJar != null) {
+            println("▶ 실행 중: ${latestJar.name}")
+            val process = ProcessBuilder("java", "-jar", latestJar.absolutePath)
+                .inheritIO() // 콘솔 입출력 연결
+                .start()
+
+            // ✅ 자식 프로세스가 끝날 때까지 대기 (출력 정상 표시)
+            process.waitFor()
+        } else {
+            println("⚠️ JAR 파일을 찾을 수 없습니다.")
+        }
+    }
 }
