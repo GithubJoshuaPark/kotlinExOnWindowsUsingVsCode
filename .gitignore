@@ -17,3 +17,6 @@ local.properties
 *.jar
 *.war
 *.ear
+
+# Gradle files
+.gradle/
